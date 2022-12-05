@@ -1,0 +1,21 @@
+main.container.unpublished{
+	width: 80%;
+}
+.col-left{
+	width: 30%;
+}
+.col-right{
+	width: 70%;
+}
+.newTypeQuestion{
+	display: none;
+}
+.subordinateQuestion{
+	display: none;
+}
+.MuiDialogTitle-root+.css-ypiqx9-MuiDialogContent-root {
+    padding-top: 5px !important;
+}
+.descricaoNovoGrupo{
+	margin-bottom: 25px;
+}

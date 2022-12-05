@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useLocation } from "react-router-dom";
 import './styles.css';
 import { useHistory } from "react-router-dom";
-import { TextField, Button} from '@material-ui/core';
+import { TextField, Button, CircularProgress } from '@material-ui/core';
 import { Add, Edit } from '@material-ui/icons';
 
 import { connect } from 'react-redux';
@@ -18,35 +18,31 @@ function setParticipantId(participantId) {
 
 function Prontuario({user, dispatch}) {
 
-    const [search, setSearch] = useState('')
-    const [error, setError] = useState('')
-    const [modules, setModules] = useState([])
-    const [modulesLoaded, setModulesLoaded] = useState(false)
-
+    const [search, setSearch] = useState('');
+    const [error, setError] = useState('');
+    const [questionnaireID, setQuestionnaireID] = useState('');
+    const [modules, setModules] = useState([]);
+    const [modulesLoaded, setModulesLoaded] = useState(false);
+    const [loadingSearch, setLoadingSearch] = useState(false);
     const history = useHistory();
-
     const location = useLocation();
 
     async function handleSearch(e) {
         e.preventDefault();
-        console.log(
-            {
-                medicalRecord: search,
-                hospitalUnitId: user[location.state.hospitalIndex].hospitalunitid,
-            }
-        )
-
-        setError('')
+        setError('');
+        setLoadingSearch(true);
         setModulesLoaded(false);
         const response = await api.post('/searchMedicalRecord', {
             medicalRecord: search,
             hospitalUnitId: user[location.state.hospitalIndex].hospitalunitid,
         }).catch( function (error) {
+            setLoadingSearch(false);
             console.log(error)
             console.log(error.response.data)
         });
        
         if(response.data) {
+            setLoadingSearch(false);
             setModulesLoaded(true);
             if(response.data.length > 0) {
                 dispatch(setParticipantId(response.data[0].participantID));
@@ -76,7 +72,13 @@ function Prontuario({user, dispatch}) {
         }
 
         setModules(response.data)
-        console.log(response.data);
+        console.log("modules", response.data);
+
+        const response1 = await api.get('/getQuestionnaireFromMedicalRecord/'+ search);
+        if (response1.data){  
+            setQuestionnaireID(response1.data[0].questionnaireID); 
+            //console.log("questionnaire data", response1.data[0].questionnaireID)
+        }
     }
 
     function toForm(prontuario) {
@@ -104,7 +106,12 @@ function Prontuario({user, dispatch}) {
                 <form noValidate autoComplete="off" onSubmit={handleSearch}>
                     <TextField id="standard-basic" label="Nº Prontuário" onChange={handleChange}/>
                     <Button variant="contained" color="primary" type="submit">
-                        Buscar
+                        { !loadingSearch &&
+                            'Buscar'
+                        }
+                        { loadingSearch &&
+                            <CircularProgress color="white"/>
+                        }
                     </Button>
                 </form>
                 <Button variant="outlined" color="primary" className="add-prontuario" onClick={ () => {
@@ -130,7 +137,9 @@ function Prontuario({user, dispatch}) {
                         <Button variant="outlined" color="primary" className="add-modulo" onClick={ () => {
                             history.push('/modulos', { hospitalIndex: location.state.hospitalIndex,
                                                        prontuario: modules.length > 0 ? modules[0].medicalRecord : search,
-                                                       registeredModules: modules[0].formrecordid ? modules : [] })
+                                                       registeredModules: modules[0].formrecordid ? modules : [],
+                                                       questionnaireID: questionnaireID
+                                                     }) 
                         }}>
                             <Add color="primary" />
                             Novo lançamento de módulo

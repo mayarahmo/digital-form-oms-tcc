@@ -45,11 +45,15 @@ class UserController extends Controller
     public function login(Request $request)
     {
         try {
+
+            //echo "<pre>";
+            //var_dump($request);
+            //echo "</pre>";
             $query = DB::select("CALL getuser('{$request->login}', '{$request->password}')");
             if($query) {
                 return response()->json($query);
             } else {
-                return response()->json('Email ou senha incorreta.', 403);
+               return response()->json('Email ou senha incorreta.', 403);
             }
         } catch(Expection $e) {
             return response()->json($e, 500);

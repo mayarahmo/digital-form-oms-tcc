@@ -11,11 +11,14 @@ import store from './store';
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: '#538EB3',
+      main: '#0052D2',
     },
     secondary: {
       main: '#91BAD6',
     },
+    white: {
+      main: '#FFFFFF'
+    }
   },
 });
 

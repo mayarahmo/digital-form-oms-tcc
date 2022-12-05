@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useHistory } from "react-router-dom";
 import './styles.css';
-import { TextField, Button } from '@material-ui/core';
+import { TextField, Button, CircularProgress } from '@material-ui/core';
 import api from '../../services/api';
 import { AES, mode } from 'crypto-js';
 //import logo from '../../../public/assets/logo-vodan.png';
@@ -39,9 +39,12 @@ function Login({ logged, dispatch }) {
 
   const history = useHistory();
 
+  const [loading, setLoading] = useState(false);
+
   async function handleLogin(e) {
     e.preventDefault();
     const encryptedPassword = AES.encrypt(form.senha, 10, { mode: mode.ECB }).toString();
+    setLoading(true);
     try {
       const response = await api.post('/login',  {
         login: form.email,
@@ -64,6 +67,7 @@ function Login({ logged, dispatch }) {
       console.log(e);
       if(e.message.slice(-3) === '403') {
         setError('Email ou senha inválidas');
+        setLoading(false);
       }
     }
 
@@ -87,7 +91,14 @@ function Login({ logged, dispatch }) {
         <TextField style={styles.TextField} name="email" label="Email" type="email" onChange={handleChange} />
         <TextField style={styles.TextField} name="senha" label="Senha" type="password" onChange={handleChange} />
         <span className="error">{error}</span>
-        <Button style={styles.Button} variant="contained" type="submit" color="primary" disabled={form.email === '' || form.senha === ''}>Entrar</Button>
+        <Button style={styles.Button} variant="contained" type="submit" color="primary" disabled={form.email === '' || form.senha === ''}>
+          { !loading &&
+            'Entrar'
+          }
+          { loading &&
+            <CircularProgress color="white"/>
+          }
+        </Button>
       </form>
     </div>
   );

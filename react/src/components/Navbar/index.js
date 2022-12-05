@@ -21,24 +21,26 @@ function userLogout() {
   }
 
 function Navbar({ onSubmit, state, dispatch }) {
-
-    const history = useHistory();
     
+    const history = useHistory();    
+
     console.log(state);
 
     function logout() {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('username');
         dispatch(userLogout());
         window.location.href = '/';
     }
 
+    /*function clickHandler(){
+        history.goBack();
+    }*/
+
     return (
-        <nav>
+        <nav id="vodan_br">
             <div className="navContent">
                 <div className="leftItems">
-                    <img src="assets/logo-icon.png" />
-                    <h1>Formulário OMS</h1>
+                   <a href="/" ><img src="assets/logo-icon.png" /></a>
+                    <h1>VODAN BR</h1>
                 </div>
                 <div className="rightItems">
                     <p>Acesso como <b>{localStorage.getItem('username')}</b></p>

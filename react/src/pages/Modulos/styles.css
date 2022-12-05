@@ -11,7 +11,7 @@ div.modulos-list div.item {
     border-radius: 5px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 30px;
 }
 
 div.modulos-list div.item:hover {
@@ -21,4 +21,14 @@ div.modulos-list div.item:hover {
 
 div.modulos-list div.item h4 {
     font-size: 20px;
+}
+
+div.modulos-list div.item p {
+    margin-top: 5px;
+}
+
+@media (max-width: 640px) {
+    div.modulos-list {
+        grid-template-columns: 1fr;
+    }
 }

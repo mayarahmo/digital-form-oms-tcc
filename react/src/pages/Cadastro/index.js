@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import './styles.css';
-import { TextField, Button, InputLabel, Select, MenuItem } from '@material-ui/core';
+import { TextField, Button, InputLabel, Select, MenuItem, CircularProgress } from '@material-ui/core';
 import { AES, mode } from 'crypto-js';
 
 import api from '../../services/api';
@@ -39,6 +39,8 @@ function Cadastro({user}) {
         error: ''
     })
 
+    const [loading, setLoading] = useState(false);
+
     const history = useHistory();
 
     function validators() {
@@ -74,12 +76,13 @@ function Cadastro({user}) {
     async function handleRegister(e) {
         e.preventDefault();
 
-        console.log(form)
+        setLoading(true);
         try {
             const response = await api.post('/register', form);
             console.log(response);
             history.replace('/hospital');
         } catch(e) {
+            setLoading(false);
             console.log(e)
             setForm({
                 ...form,
@@ -92,6 +95,7 @@ function Cadastro({user}) {
             error: validateErrors
         });
         console.log(form, validateErrors)
+        setLoading(false);
         history.go(-1)
     }
 
@@ -127,7 +131,14 @@ function Cadastro({user}) {
                     <Button style={styles.Button} variant="contained" type="submit" color="primary" disabled={
                         form.nome === '' || form.sobrenome === '' || form.email === '' || form.telefone === '' || form.senha === '' || form.confirmasenha === '' ||
                         form.crm === '' || form.funcao === ''
-                    }>Registrar</Button>
+                    }>
+                        { !loading &&
+                            'Registrar'
+                        }
+                        { loading &&
+                            <CircularProgress color="white"/>
+                        }                    
+                    </Button>
                 </div>
                 
             </form>
